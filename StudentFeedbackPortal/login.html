@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Login | Student Feedback Portal</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="auth-page">
+    <div class="auth-shell">
+      <div class="auth-card">
+        <div class="auth-brand">Student Feedback</div>
+        <h2>Student Login</h2>
+        <p>Access your feedback portal and submit course reviews.</p>
+
+        <form class="auth-form" id="studentLoginForm">
+          <label>
+            Student ID
+            <input id="studentId" type="text" placeholder="Enter register number" required />
+          </label>
+          <label>
+            Password
+            <input id="studentPassword" type="password" placeholder="Enter password" required />
+          </label>
+          <button type="submit" class="btn btn-primary full-width">Login</button>
+        </form>
+
+        <div class="auth-links">
+          <a href="index.html">Back to home</a>
+          <a href="admin-login.html">Admin login</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('studentLoginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const studentId = document.getElementById('studentId').value.trim();
+        const password = document.getElementById('studentPassword').value.trim();
+
+        if (!studentId || !password) {
+          alert('Please enter your student ID and password.');
+          return;
+        }
+
+        if (studentId === 'STU123' && password === 'student123') {
+          window.location.href = 'feedback.html';
+        } else {
+          alert('Invalid student credentials. Try Student ID: STU123 and Password: student123');
+        }
+      });
+    </script>
+  </body>
+</html>

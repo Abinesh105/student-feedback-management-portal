@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feedback Form | Student Feedback Portal</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="auth-page">
+    <div class="auth-shell wide-shell">
+      <div class="auth-card form-card">
+        <div class="auth-brand">Student Feedback</div>
+        <h2>Course Feedback Form</h2>
+        <p>Share your honest opinion to help improve teaching and learning quality.</p>
+
+        <form class="feedback-form" id="feedbackForm">
+          <div class="split-form">
+            <label>
+              Faculty
+              <select id="facultySelect" required>
+                <option value="">Select faculty</option>
+                <option>Dr. R. Kumar</option>
+                <option>Ms. S. Priya</option>
+                <option>Mr. A. Arun</option>
+                <option>Dr. N. Selvi</option>
+                <option>Mr. K. Vasanth</option>
+              </select>
+            </label>
+            <label>
+              Subject
+              <select id="subjectSelect" required>
+                <option value="">Select subject</option>
+                <option>Python Programming</option>
+                <option>Database Management</option>
+                <option>Web Technologies</option>
+                <option>Operating Systems</option>
+                <option>Data Structures</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="rating-group">
+            <label>Teaching clarity</label>
+            <div class="star-rating" aria-label="Teaching clarity rating">
+              <input type="radio" id="teaching-5" name="teachingClarity" value="5" required />
+              <label for="teaching-5" title="5 stars">★</label>
+              <input type="radio" id="teaching-4" name="teachingClarity" value="4" />
+              <label for="teaching-4" title="4 stars">★</label>
+              <input type="radio" id="teaching-3" name="teachingClarity" value="3" />
+              <label for="teaching-3" title="3 stars">★</label>
+              <input type="radio" id="teaching-2" name="teachingClarity" value="2" />
+              <label for="teaching-2" title="2 stars">★</label>
+              <input type="radio" id="teaching-1" name="teachingClarity" value="1" />
+              <label for="teaching-1" title="1 star">★</label>
+            </div>
+          </div>
+
+          <div class="rating-group">
+            <label>Course quality</label>
+            <div class="star-rating" aria-label="Course quality rating">
+              <input type="radio" id="course-5" name="courseQuality" value="5" required />
+              <label for="course-5" title="5 stars">★</label>
+              <input type="radio" id="course-4" name="courseQuality" value="4" />
+              <label for="course-4" title="4 stars">★</label>
+              <input type="radio" id="course-3" name="courseQuality" value="3" />
+              <label for="course-3" title="3 stars">★</label>
+              <input type="radio" id="course-2" name="courseQuality" value="2" />
+              <label for="course-2" title="2 stars">★</label>
+              <input type="radio" id="course-1" name="courseQuality" value="1" />
+              <label for="course-1" title="1 star">★</label>
+            </div>
+          </div>
+
+          <label>
+            Comments
+            <textarea id="feedbackComments" rows="5" placeholder="Write your feedback here..." required></textarea>
+          </label>
+
+          <button type="submit" class="btn btn-primary full-width">Submit Feedback</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const FEEDBACK_KEY = 'student_feedback_entries';
+
+      document.getElementById('feedbackForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const faculty = document.getElementById('facultySelect').value.trim();
+        const subject = document.getElementById('subjectSelect').value.trim();
+        const comments = document.getElementById('feedbackComments').value.trim();
+        const teachingClarity = Number(document.querySelector('input[name="teachingClarity"]:checked')?.value || 0);
+        const courseQuality = Number(document.querySelector('input[name="courseQuality"]:checked')?.value || 0);
+
+        if (!faculty || !subject || !comments || !teachingClarity || !courseQuality) {
+          alert('Please complete all fields and select both star ratings before submitting.');
+          return;
+        }
+
+        const newFeedback = {
+          faculty,
+          subject,
+          teachingClarity,
+          courseQuality,
+          comments,
+          studentId: 'STU123',
+          submittedAt: new Date().toISOString()
+        };
+
+        const existing = JSON.parse(localStorage.getItem(FEEDBACK_KEY) || '[]');
+        existing.unshift(newFeedback);
+        localStorage.setItem(FEEDBACK_KEY, JSON.stringify(existing));
+
+        alert('Feedback submitted successfully. It is now visible in the admin dashboard.');
+        document.getElementById('feedbackForm').reset();
+      });
+    </script>
+  </body>
+</html>

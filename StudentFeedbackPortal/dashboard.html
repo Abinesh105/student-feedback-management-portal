@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Student Feedback Portal</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="dashboard-body">
+    <header class="dashboard-header">
+      <div class="container dashboard-nav">
+        <div class="brand">Student Feedback</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="dashboard.html" class="active">Dashboard</a>
+          <a href="login.html">Student Login</a>
+          <a href="admin-login.html">Admin Login</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container dashboard-main">
+      <section class="dashboard-topbar">
+        <div>
+          <p class="section-tag">Overview</p>
+          <h2>Feedback Dashboard</h2>
+        </div>
+        <button class="btn btn-primary">Export Report</button>
+      </section>
+
+      <section class="summary-grid">
+        <div class="summary-card">
+          <span>Total Feedback</span>
+          <strong id="totalFeedbackValue">0</strong>
+          <small>Live student responses</small>
+        </div>
+        <div class="summary-card">
+          <span>Average Rating</span>
+          <strong id="averageRatingValue">0.0/5</strong>
+          <small>Current feedback average</small>
+        </div>
+        <div class="summary-card">
+          <span>Faculty Rated</span>
+          <strong id="facultyRatedValue">0</strong>
+          <small>Unique faculty reviewed</small>
+        </div>
+        <div class="summary-card">
+          <span>Pending Reviews</span>
+          <strong id="pendingReviewsValue">0</strong>
+          <small>Needs admin action</small>
+        </div>
+      </section>
+
+      <section class="panel-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Submitted Feedback</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Faculty</th>
+                <th>Subject</th>
+                <th>Rating</th>
+                <th>Student</th>
+              </tr>
+            </thead>
+            <tbody id="feedbackTableBody">
+              <tr><td colspan="4">No feedback submitted yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Recent Activity</h3>
+          </div>
+          <ul class="activity-list" id="recentActivityList">
+            <li><span class="dot green"></span> No student responses yet</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const FEEDBACK_KEY = 'student_feedback_entries';
+
+      function loadFeedbackData() {
+        const entries = JSON.parse(localStorage.getItem(FEEDBACK_KEY) || '[]');
+        const tableBody = document.getElementById('feedbackTableBody');
+        const recentList = document.getElementById('recentActivityList');
+
+        const totalFeedback = entries.length;
+        const average = totalFeedback
+          ? (entries.reduce((sum, item) => sum + ((Number(item.teachingClarity) + Number(item.courseQuality)) / 2), 0) / totalFeedback).toFixed(1)
+          : '0.0';
+        const facultyCount = new Set(entries.map((item) => item.faculty)).size;
+
+        document.getElementById('totalFeedbackValue').textContent = totalFeedback;
+        document.getElementById('averageRatingValue').textContent = average + '/5';
+        document.getElementById('facultyRatedValue').textContent = facultyCount;
+        document.getElementById('pendingReviewsValue').textContent = totalFeedback ? Math.max(0, totalFeedback - 1) : 0;
+
+        if (!entries.length) {
+          tableBody.innerHTML = '<tr><td colspan="4">No feedback submitted yet.</td></tr>';
+          recentList.innerHTML = '<li><span class="dot green"></span> No student responses yet</li>';
+          return;
+        }
+
+        tableBody.innerHTML = entries.map((entry) => {
+          const rating = (((Number(entry.teachingClarity) + Number(entry.courseQuality)) / 2)).toFixed(1);
+          return `
+            <tr>
+              <td>${entry.faculty}</td>
+              <td>${entry.subject}</td>
+              <td>${rating}/5</td>
+              <td>${entry.studentId}</td>
+            </tr>
+          `;
+        }).join('');
+
+        recentList.innerHTML = entries.slice(0, 4).map((entry, index) => {
+          const colors = ['green', 'blue', 'orange', 'purple'];
+          return `<li><span class="dot ${colors[index % colors.length]}"></span> ${entry.faculty} rated ${entry.subject}</li>`;
+        }).join('');
+      }
+
+      window.addEventListener('DOMContentLoaded', loadFeedbackData);
+    </script>
+  </body>
+</html>
